@@ -1,5 +1,3 @@
-#include <setjmp.h>
-
 #define	BLKSIZE	4096
 #define	NBLK	2047
 #define	NULL	0
@@ -23,7 +21,8 @@
 #define	READ	0
 #define	WRITE	1
 #define	SIGHUP	1
-#define	SIGQUIT	3
+#define ARGC_ERROR 0
+#define BUFSIZE 100
 
 typedef void	(*SIG_TYP)(int);
 
@@ -74,12 +73,12 @@ int	wrapp;
 unsigned nlall = 128;
 char	line[70];
 char	*linp	= line;
-char grepbuf[GBSIZE];
 char	tmpXXXXX[50] = "/tmp/eXXXXX";
-jmp_buf	savej;
-SIG_TYP	oldhup;
-SIG_TYP	oldquit;
+//SIG_TYP	oldhup;
+//SIG_TYP	oldquit;
 char inputbuf[GBSIZE];
+char buf[BUFSIZE];
+int bufp = 0;
 
 char	*mktemp(char *);
 long	lseek(int, long, int);
@@ -91,23 +90,17 @@ int append(int (*f)(void), unsigned int *a);
 int backref(int i, char *lp);
 void blkio(int b, char *buf, long (*iofcn)(int, void*, unsigned long));
 int cclass(char *set, int c, int af);
-void commands(void);
 void compile(int eof);
 void error(char *s);
 int execute(unsigned int *addr);
 void exfile(void);
-void filename(int comm);
+void filename(const char *comm);
 int getchr(void);
 int getfile(void);
 int getnum(void);
 void global(int k);
 void init(void);
-unsigned int *address(void);
-void newline(void);
-void nonzero(void);
 void onhup(int n);
-void onintr(int n);
-void print(void);
 void putchr_(int ac);
 void putd(void);
 void putfile(void);
@@ -117,5 +110,16 @@ void quit(int n);
 void setwide(void);
 void setnoaddr(void);
 void squeeze(int i);
-void greperror(char);
-void grepline(void);
+void readfile(const char *);
+void print(void);
+void newline(void);
+unsigned int* address(void);
+int getnum(void);
+void search(const char* re);
+void ungetch_(int c);
+int getch_(void);
+void drawline(void);
+void search_file(const char* filename, const char* searchfor);
+void process_dir(const char* dir, const char* searchfor, void (*fp)(const char*, const char*));
+void printcommand(void);
+
